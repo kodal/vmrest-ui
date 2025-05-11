@@ -322,7 +322,7 @@ export const VMList = () => {
           window.location.reload();
         }}
       />
-      <Box sx={{ maxWidth: 900, mx: 'auto', mt: 2 }}>
+      <Box sx={{ width: 1200, mx: 'auto', mt: 2 }}>
         {isLoading && (
           <Box sx={{ display: 'flex', justifyContent: 'center', mt: 8 }}>
             <CircularProgress size={48} />
@@ -336,22 +336,42 @@ export const VMList = () => {
           </Alert>
         )}
         {!isLoading && !isError && (
-          <TableContainer component={Paper} sx={{ borderRadius: 2, boxShadow: 'none', bgcolor: 'background.paper', mt: 2 }}>
-            <Table size="small" sx={{ fontSize: 14 }}>
+          <TableContainer
+            component={Paper}
+            sx={{
+              width: 1200,
+              mx: 'auto',
+              borderRadius: 4,
+              boxShadow: '0 4px 32px rgba(0,0,0,0.18)',
+              bgcolor: '#23272e',
+              mt: 4,
+              overflow: 'hidden'
+            }}
+          >
+            <Table
+              size="small"
+              sx={{
+                fontSize: 15,
+                width: '100%',
+                tableLayout: 'fixed',
+                '& th': { fontWeight: 700, fontSize: 16, bgcolor: 'rgba(255,255,255,0.04)', color: '#fff', border: 0 },
+                '& td, & th': { borderBottom: '1px solid rgba(255,255,255,0.08)', color: '#e0e0e0' },
+                '& tr:hover': { bgcolor: 'rgba(255,255,255,0.06)', transition: 'background 0.2s' }
+              }}
+            >
               <TableHead>
-                <TableRow sx={{ background: 'rgba(0,0,0,0.04)' }}>
-                  <TableCell sx={{ fontWeight: 700, fontSize: 15 }}>Name</TableCell>
-                  <TableCell sx={{ fontWeight: 700, fontSize: 15 }}>ID</TableCell>
-                  <TableCell sx={{ fontWeight: 700, fontSize: 15 }}>CPU</TableCell>
-                  <TableCell sx={{ fontWeight: 700, fontSize: 15 }}>Memory</TableCell>
-                  <TableCell sx={{ fontWeight: 700, fontSize: 15 }}>IP</TableCell>
-                  <TableCell sx={{ fontWeight: 700, textAlign: 'center', fontSize: 15 }}>Actions</TableCell>
+                <TableRow>
+                  <TableCell align="left" sx={{ width: 340 }}>Name / ID</TableCell>
+                  <TableCell align="center" sx={{ width: 100 }}>CPU</TableCell>
+                  <TableCell align="center" sx={{ width: 120 }}>Memory</TableCell>
+                  <TableCell align="center" sx={{ width: 220 }}>IP</TableCell>
+                  <TableCell align="center" sx={{ width: 120 }}>Actions</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {vms?.length === 0 && (
                   <TableRow>
-                    <TableCell colSpan={4} align="center">
+                    <TableCell colSpan={5} align="center">
                       <Typography variant="body1" color="text.secondary">No VMs found.</Typography>
                     </TableCell>
                   </TableRow>
@@ -364,12 +384,12 @@ export const VMList = () => {
                   const ip = ipQueries[idx]?.data;
                   const vmInfo = vmInfoQueries[idx]?.data;
                   return (
-                    <TableRow key={vm.id} hover sx={{ cursor: 'pointer', fontSize: 14, height: 44 }}>
-                      <TableCell sx={{ fontWeight: 600, display: 'flex', alignItems: 'center', gap: 1, cursor: 'pointer' }} onClick={() => handleSettings(vm.id)}>
-                        {getVMName(vm.path)}
+                    <TableRow key={vm.id} hover sx={{ fontSize: 15, height: 48 }}>
+                      <TableCell align="left" sx={{ fontWeight: 600, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 0.5, cursor: 'pointer', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} onClick={() => handleSettings(vm.id)}>
+                        <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 320 }}>{getVMName(vm.path)}</span>
+                        <Typography variant="caption" color="text.secondary" sx={{ fontSize: 12, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 320 }}>{vm.id}</Typography>
                       </TableCell>
-                      <TableCell sx={{ color: 'text.secondary', fontSize: 13 }}>{vm.id}</TableCell>
-                      <TableCell sx={{ minWidth: 80, textAlign: 'right' }}>
+                      <TableCell align="center">
                         <Typography variant="body2">
                           {typeof vmInfo?.cpu === 'object' && vmInfo?.cpu?.processors !== undefined
                             ? vmInfo.cpu.processors
@@ -378,7 +398,7 @@ export const VMList = () => {
                               : '—'}
                         </Typography>
                       </TableCell>
-                      <TableCell sx={{ minWidth: 90, textAlign: 'right' }}>
+                      <TableCell align="center">
                         <Typography variant="body2">
                           {typeof vmInfo?.memory === 'object' && vmInfo?.memory?.size !== undefined
                             ? vmInfo.memory.size
@@ -388,16 +408,9 @@ export const VMList = () => {
                           {((typeof vmInfo?.memory === 'object' && vmInfo?.memory?.size) || typeof vmInfo?.memory === 'number') ? ' MB' : ''}
                         </Typography>
                       </TableCell>
-                      <TableCell>
+                      <TableCell align="center" sx={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 200 }}>
                         {ip?.ip ? (
-                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                            <Typography variant="body2">{ip.ip}</Typography>
-                            <Tooltip title="Copy IP">
-                              <IconButton size="small" onClick={() => navigator.clipboard.writeText(ip.ip || '')}>
-                                <ContentCopy fontSize="small" />
-                              </IconButton>
-                            </Tooltip>
-                          </Box>
+                          <Typography variant="body2" sx={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 200 }}>{ip.ip}</Typography>
                         ) : ip?.error ? (
                           <Tooltip title={ip.tooltip || ''}>
                             <Typography variant="body2" color="text.secondary">{ip.error}</Typography>
@@ -406,7 +419,7 @@ export const VMList = () => {
                           <Typography variant="body2" color="text.secondary">—</Typography>
                         )}
                       </TableCell>
-                      <TableCell align="center" sx={{ minWidth: 120 }}>
+                      <TableCell align="center">
                         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1 }}>
                           {state === 'poweringOn' || state === 'poweringOff' ? (
                             <Tooltip title={stateInfo[state as keyof typeof stateInfo]?.label || ''}>
