@@ -1,8 +1,30 @@
 import axios from 'axios';
 import type { VM, VMInformation, VMPowerState, NICDevice, SharedFolder } from '../types/api';
 
+declare global {
+  interface Window {
+    __APP_CONFIG__?: {
+      VMREST_URL?: string;
+    };
+  }
+}
+
+function buildApiBaseUrl(): string {
+  const runtimeUrl = typeof window !== 'undefined' ? window.__APP_CONFIG__?.VMREST_URL : undefined;
+  const rawHost: string | undefined = runtimeUrl
+    || (import.meta as any).env?.VITE_VMREST_URL
+    || (import.meta as any).env?.VMREST_URL;
+
+  if (!rawHost) return '/api';
+
+  const trimmed = rawHost.trim().replace(/\/$/, '');
+  const hasProtocol = /^https?:\/\//i.test(trimmed);
+  const origin = hasProtocol ? trimmed : `http://${trimmed}`;
+  return `${origin}/api`;
+}
+
 const api = axios.create({
-  baseURL: '/api',
+  baseURL: buildApiBaseUrl(),
   headers: {
     'Content-Type': 'application/vnd.vmware.vmw.rest-v1+json',
     'Accept': 'application/vnd.vmware.vmw.rest-v1+json'

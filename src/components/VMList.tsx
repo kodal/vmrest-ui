@@ -30,14 +30,9 @@ import {
   Stop,
   Delete,
   Settings,
-  PowerSettingsNew,
-  PauseCircle,
-  HourglassEmpty,
   MoreVert,
   ContentCopy,
-  Memory,
-  Dns,
-  DeveloperBoard
+  
 } from '@mui/icons-material';
 import { useQuery, useMutation, useQueryClient, useQueries } from '@tanstack/react-query';
 import { getAllVMs, getPowerState, changePowerState, deleteVM, getVMIP, cloneVM, registerVM, getVM, getVMNicIps } from '../api/client';
@@ -380,7 +375,6 @@ export const VMList = () => {
                   const apiState = powerStates?.[vm.id]?.power_state || 'poweredOff';
                   const localState = localPowering[vm.id];
                   const state = localState || apiState;
-                  const stateObj = stateInfo[state as keyof typeof stateInfo];
                   const ip = ipQueries[idx]?.data;
                   const vmInfo = vmInfoQueries[idx]?.data;
                   return (
